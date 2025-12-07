@@ -15,4 +15,7 @@ interface ClothingDao {
 
     @Delete
     suspend fun delete(item: ClothingItem)
+
+    @Query("SELECT * FROM clothing_items WHERE id = :id LIMIT 1")
+    suspend fun getById(id: Long): ClothingItem?
 }

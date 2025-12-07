@@ -17,4 +17,9 @@ class ClothingRepository(
     fun getOutfits(): Flow<List<Outfit>> = outfitDao.getAll()
     suspend fun addOutfit(outfit: Outfit) = outfitDao.insert(outfit)
     suspend fun deleteOutfit(outfit: Outfit) = outfitDao.delete(outfit)
+    suspend fun getClothingItemsByIds(ids: List<Long>): List<ClothingItem> {
+        return ids.mapNotNull { id ->
+            clothingDao.getById(id)
+        }
+    }
 }
