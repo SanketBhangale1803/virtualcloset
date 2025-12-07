@@ -10,35 +10,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.virtualcloset.data.model.ClothingItem
+import androidx.core.net.toUri
 
 @Composable
-fun ClosetScreen(clothes: List<ClothingItem>) {
-
+fun ClosetScreen(
+    clothes: List<ClothingItem>,
+    onDelete: (ClothingItem) -> Unit
+) {
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-
         items(clothes) { item ->
-
             Card(modifier = Modifier.fillMaxWidth()) {
-
-                Column(modifier = Modifier.padding(16.dp)) {
-
+                Row(modifier = Modifier.padding(12.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                     Image(
-                        painter = rememberAsyncImagePainter(item.imageUri),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .height(220.dp)
-                            .fillMaxWidth()
+                        painter = rememberAsyncImagePainter(item.imageUri.toUri()),
+                        contentDescription = item.name,
+                        modifier = Modifier.size(80.dp)
                     )
-
-                    Spacer(Modifier.height(10.dp))
-
-                    Text(text = item.name, style = MaterialTheme.typography.titleMedium)
-                    Text(text = "Category: ${item.category}")
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(item.name, style = MaterialTheme.typography.titleMedium)
+                        Text(item.category, style = MaterialTheme.typography.bodyMedium)
+                    }
+                    Button(onClick = { onDelete(item) }) {
+                        Text("Delete")
+                    }
                 }
             }
         }

@@ -8,49 +8,42 @@ import androidx.navigation.compose.composable
 import com.example.virtualcloset.ui.screens.*
 import com.example.virtualcloset.viewmodel.ClothingViewModel
 import com.example.virtualcloset.viewmodel.OutfitViewModel
-import com.example.virtualcloset.data.ClothingRepository
 
 @Composable
 fun AppNavHost(
     navController: NavHostController,
     clothingVM: ClothingViewModel,
-    outfitVM: OutfitViewModel,
-    repo: ClothingRepository
+    outfitVM: OutfitViewModel
 ) {
     val clothesState = clothingVM.clothes.collectAsState()
     val outfitsState = outfitVM.outfits.collectAsState()
 
     NavHost(navController = navController, startDestination = "home") {
-
         composable("home") {
-            HomeScreen { route -> navController.navigate(route) }
+            HomeScreen(onNavigate = { route -> navController.navigate(route) })
         }
-
         composable("closet") {
-            ClosetScreen(clothes = clothesState.value)
+            ClosetScreen(
+                clothes = clothesState.value,
+                onDelete = { clothingVM.deleteClothing(it) }
+            )
         }
-
         composable("add") {
             AddClothingScreen { name, category, uri ->
-                clothingVM.addClothing(name, category, uri)
+                clothingVM.addClothing(name, category, uri.toString())
                 navController.popBackStack()
             }
         }
-
         composable("mix") {
             OutfitMixerScreen(
                 clothes = clothesState.value,
-                onSaveOutfit = { name, ids ->
-                    outfitVM.addOutfit(name, ids)
-                    navController.popBackStack()
-                }
+                onSaveOutfit = { name, itemIds -> outfitVM.addOutfit(name, itemIds) }
             )
         }
-
         composable("saved") {
             SavedOutfitsScreen(
                 outfits = outfitsState.value,
-                repo = repo
+                clothes = clothesState.value
             )
         }
     }

@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             VirtualClosetTheme {
                 val navController = rememberNavController()
-                AppNavHost(navController, clothingVM, outfitVM, repo)
+                AppNavHost(navController, clothingVM, outfitVM)
             }
         }
     }

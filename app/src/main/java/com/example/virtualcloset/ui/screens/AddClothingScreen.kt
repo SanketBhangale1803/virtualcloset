@@ -12,68 +12,34 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
-fun AddClothingScreen(onSave: (name: String, category: String, uri: String) -> Unit) {
-
+fun AddClothingScreen(
+    onSave: (name: String, category: String, uri: Uri) -> Unit
+) {
     var name by remember { mutableStateOf("") }
     var category by remember { mutableStateOf("") }
-    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
 
-    // Launcher to open gallery
-    val imagePicker = rememberLauncherForActivityResult(
+    val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        selectedImageUri = uri
-    }
+    ) { uri: Uri? -> imageUri = uri }
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(20.dp),
+        modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-
-        Text("Add Clothing Item", style = MaterialTheme.typography.headlineSmall)
-
-        OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
-            label = { Text("Name") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        OutlinedTextField(
-            value = category,
-            onValueChange = { category = it },
-            label = { Text("Category") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        // IMAGE PICKER PREVIEW
-        Button(
-            onClick = { imagePicker.launch("image/*") },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Pick Image From Gallery")
+        OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Name") })
+        OutlinedTextField(value = category, onValueChange = { category = it }, label = { Text("Category") })
+        Button(onClick = { launcher.launch("image/*") }) {
+            Text(text = if (imageUri != null) "Change Image" else "Pick Image")
         }
-
-        if (selectedImageUri != null) {
-            Image(
-                painter = rememberAsyncImagePainter(selectedImageUri),
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(250.dp)
-            )
+        imageUri?.let {
+            Image(painter = rememberAsyncImagePainter(it), contentDescription = null, modifier = Modifier.size(150.dp))
         }
-
         Button(
-            onClick = {
-                onSave(name, category, selectedImageUri.toString())
-            },
-            enabled = name.isNotBlank() &&
-                    category.isNotBlank() &&
-                    selectedImageUri != null,
-            modifier = Modifier.fillMaxWidth()
+            onClick = { if(imageUri != null) onSave(name, category, imageUri!!) },
+            enabled = name.isNotBlank() && category.isNotBlank() && imageUri != null
         ) {
-            Text("Save")
+            Text("Save Clothing")
         }
     }
 }
