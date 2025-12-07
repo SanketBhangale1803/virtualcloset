@@ -43,7 +43,8 @@ fun AppNavHost(
         composable("saved") {
             SavedOutfitsScreen(
                 outfits = outfitsState.value,
-                clothes = clothesState.value
+                clothes = clothesState.value,
+                onDelete = { outfitVM.deleteOutfit(it) }
             )
         }
     }

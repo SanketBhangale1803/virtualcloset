@@ -20,4 +20,9 @@ class OutfitViewModel(private val repo: ClothingRepository) : ViewModel() {
         val outfit = Outfit(name = name, itemIds = itemIds.joinToString(","))
         repo.addOutfit(outfit)
     }
+
+    // Delete an outfit
+    fun deleteOutfit(outfit: Outfit) = viewModelScope.launch {
+        repo.deleteOutfit(outfit)
+    }
 }
